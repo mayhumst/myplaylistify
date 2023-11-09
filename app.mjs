@@ -76,6 +76,14 @@ app.get('/home', async (req, res) => {
             }
         );
         console.log(spotifyResponse)
+        const data = await axios.get(
+            "https://api.spotify.com/v1/me/top/tracks?limit=50",
+            {
+              headers: {
+                Authorization: "Bearer " + spotifyResponse.data.access_token,
+              },
+            }
+          );
     }
     else {
         //
@@ -111,4 +119,4 @@ app.get('/register', (req, res) => {
 
 
 
-app.listen(process.env.PORT ?? 3000);
+app.listen(process.env.PORT ?? 80);
