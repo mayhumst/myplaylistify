@@ -14,5 +14,14 @@ const User = new mongoose.Schema({
     playlists: Array
 });
 
+const Song = new mongoose.Schema({
+    name: String, 
+    artists: Array, 
+    image: String,
+    genres: Array, 
+    code: String
+})
+
 mongoose.model('Playlist', Playlist);
 mongoose.model('User', User);
+mongoose.model('Song', Song);
