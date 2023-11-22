@@ -52,7 +52,7 @@ app.get('/home', async (req, res) => {
       req.session.login = false;
   }
     
-  res.render( 'home', { layout: 'layout', client_id: process.env.CLIENT_ID, user: req.session.user });
+  res.render( 'home', { layout: 'layout', client_id: process.env.CLIENT_ID, user: req.session.user, url_encoded: process.env.REDIRECT_ENCODE });
     
 });
 
