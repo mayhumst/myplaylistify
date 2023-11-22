@@ -10,6 +10,7 @@ import mongoose from 'mongoose';
 const Playlist = mongoose.model('Playlist');
 const User = mongoose.model('User');
 const Song = mongoose.model('Song');
+const Genre = mongoose.model('Genre');
 
 const app = express();
 
@@ -65,7 +66,7 @@ async function getSongsSimple(req, res) {
   let mySongs = {}; 
 
   if(req.query.genre) {
-    const newString = req.query.genre.replace("-", " ")
+    const newString = req.query.genre.replaceAll("-", " ")
     
     mySongs = await Song.find({genres: {$all: [newString]}});
   }
@@ -76,7 +77,8 @@ async function getSongsSimple(req, res) {
 app.get('/generate', async (req, res) => {
   
   const mySongs = await getSongsSimple(req, res);
-  res.render( 'generate', { layout: 'layout', songs: mySongs });
+  const myGenres = await Genre.find({});
+  res.render( 'generate', { layout: 'layout', songs: mySongs, niche: myGenres });
   
 });
 
@@ -122,17 +124,35 @@ app.get('/redir', async (req, res) => { //when user signs into spotify, redirect
     );
     //session variables
     req.session.login = true;
-    req.session.user = thisUser.display_name;
+    req.session.user = thisUser.data.display_name;
     req.session.access_token = spotifyResponse.data.access_token;
-  
-    populate.getUserPlaylists(req, res, spotifyResponse); 
+      
+    const checkUser = await User.find({username: thisUser.data.display_name});
+    console.log("checking user " + thisUser.data.display_name);
+    if(checkUser.length === 0) {
+      // make new user and populate
+      console.log("new user! ");
+      const userObj = {
+        username: thisUser.data.display_name, 
+        genres: [], 
+        playlists: []
+      };
+      const addUserObj = new User(userObj);
+      addUserObj.save();
+
+      populate.getUserPlaylists(req, res, spotifyResponse); 
+    }
+    else {
+      console.log("old user... ");
+    }
+    
   }
   else {
-      console.log("error, continue as anonymous")
+    console.log("error, continue as anonymous");
   }
 
   res.redirect('/home');
-})
+});
 
 
 app.listen(process.env.PORT ?? 80);

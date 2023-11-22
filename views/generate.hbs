@@ -1,5 +1,6 @@
 <p>generator</p>
 
+<h3>Generate a playlist with a common genre</h3>
 <form method="get" action="">
     <label for="genre"><b>Select Genre:</b> </label>
     <select class="type" id="genre" name="genre" value="" required>
@@ -12,6 +13,19 @@
     </select>
     <input type="submit">
 </form>
+
+<h3>...or discover a niche genre instead!</h3>
+<form method="get" action="">
+    <label for="genre"><b>Find a genre:</b> </label>
+    <input list="niche-genres" type="text" name="genre" placeholder="Start typing for suggestions">
+    <datalist id="niche-genres"> 
+        {{#each niche}}
+        <option value={{this.tag}}>{{this.name}}</p>
+        {{/each}}
+    </datalist>
+    <input type="submit">
+</form>
+
 
 {{#each songs}}
 <p>{{this.name}}</p>

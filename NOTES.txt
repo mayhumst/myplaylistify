@@ -1,0 +1,17 @@
+NOTES
+
+setup "final" for local, keep "myplaylistify" for deploy
+make new spotify app
+	setup redirect to go to myplaylist-ify/.../register ????
+	Change only the env variables in heroku ?
+
+
+
+/ redirects to home
+
+home links to register, which redirects to spotify, which redirects to... (?????) 
+
+user at home: login to your spotify
+	      make account without linking spotify
+	      continue as anonymous (cannot save playlists)
+
