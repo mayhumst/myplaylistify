@@ -140,7 +140,14 @@ app.get('/redir', async (req, res) => { //when user signs into spotify, redirect
       const addUserObj = new User(userObj);
       addUserObj.save();
 
-      populate.getUserPlaylists(req, res, spotifyResponse); 
+      try {
+        populate.getUserPlaylists(req, res, spotifyResponse); 
+      }
+      catch(err) {
+        console.log("error in populate: potentially overwhelming API calls");
+        console.log(err);
+      }
+      
     }
     else {
       console.log("old user... ");
