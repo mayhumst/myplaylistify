@@ -84,7 +84,7 @@ app.get('/', (req, res) => {
 
 app.get('/generate', async (req, res) => {
   const myGenres = await Genre.find({});
-  res.render( 'generate', { layout: 'layout', url: process.env.BASE_URL, pinnedsongs: [], songs: [], niche: myGenres });
+  res.render( 'generate', { layout: 'layout', url: process.env.BASE_URL, user: req.session.user, pinnedsongs: [], songs: [], niche: myGenres });
 });
 
 app.post('/generate', async (req, res) => {
@@ -102,7 +102,17 @@ app.post('/generate', async (req, res) => {
   //query new songs from db
   newsongs = await getSongsSimple(req, res)
   //render with list of pinned + list of new generated
-  res.render( 'generate', { layout: 'layout', url: process.env.BASE_URL, pinnedsongs: pinnedarrSong, songs: newsongs, niche: myGenres });
+  res.render( 'generate', { layout: 'layout', url: process.env.BASE_URL, user: req.session.user, pinnedsongs: pinnedarrSong, songs: newsongs, niche: myGenres });
+});
+
+app.post('/login', (req, res) => {
+  req.session.user = req.body.user; 
+  res.redirect('/generate'); 
+});
+
+app.post('/signup', (req, res) => {
+  req.session.user = req.body.user; 
+  res.redirect('/generate'); 
 });
 
 app.get('/myplaylists', async (req, res) => {
@@ -160,24 +170,24 @@ app.get('/redir', async (req, res) => { //when user signs into spotify, redirect
       const addUserObj = new User(userObj);
       addUserObj.save();
 
-      try {
+      /* try {
         populate.getUserPlaylists(req, res, spotifyResponse); 
       }
       catch(err) {
         console.log("error in populate: potentially overwhelming API calls");
         console.log(err);
-      }
+      } */
       
     }
     else {
       console.log("old user... ");
-      try {
+      /* try {
         populate.getUserPlaylists(req, res, spotifyResponse); 
       }
       catch(err) {
         console.log("error in populate: potentially overwhelming API calls");
         console.log(err);
-      }
+      } */
     }
     
   }
