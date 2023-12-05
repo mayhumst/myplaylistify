@@ -1,32 +1,72 @@
-<p>generator</p>
-
-<h3>Generate a playlist with a common genre</h3>
-<form method="get" action="">
-    <label for="genre"><b>Select Genre:</b> </label>
-    <select class="type" id="genre" name="genre" value="" required>
-        <option class="type" value="rock">Rock</option>
-        <option class="type" value="pop">Pop</option>
-        <option class="type" value="indie-rock">Indie Rock</option>
-        <option class="type" value="hip-hop">Hip-Hop</option>
-        <option class="type" value="emo-rap">Emo Rap</option>
-        <option class="type" value="bedroom-pop">Bedroom Pop</option>
-    </select>
-    <input type="submit">
-</form>
-
-<h3>...or discover a niche genre instead!</h3>
-<form method="get" action="">
-    <label for="genre"><b>Find a genre:</b> </label>
-    <input list="niche-genres" type="text" name="genre" placeholder="Start typing for suggestions">
-    <datalist id="niche-genres"> 
-        {{#each niche}}
-        <option value={{this.tag}}>{{this.name}}</p>
-        {{/each}}
-    </datalist>
-    <input type="submit">
-</form>
 
 
-{{#each songs}}
-<p>{{this.name}}</p>
-{{/each}}
+
+<div class="genre-buttons">
+    <h3>Generate songs from a common genre</h3>
+    <ul>
+        <li><h4 onclick="main_genre('edm')" >EDM</h4></li>
+        <li><h4 onclick="main_genre('grunge')" >Grunge</h4></li>
+        <li><h4 onclick="main_genre('hip hop')" >Hip-Hop</h4></li>
+        <li><h4 onclick="main_genre('pov: indie')" >Indie</h4></li>
+        <li><h4 onclick="main_genre('k-pop')" >K-Pop</h4></li>
+        <li><h4 onclick="main_genre('pop')" >Pop</h4></li>
+        <li><h4 onclick="main_genre('r&b')" >R&B</h4></li>
+        <li><h4 onclick="main_genre('rock')" >Rock</h4></li>
+        <li><h4 onclick="main_genre('punk')" >Punk</h4></li>
+    </ul>
+</div>
+
+<div class="niche-buttons">
+    <h3>...or discover a niche genre instead!</h3>
+    <form method="post" action="/generate">
+        <label for="genre"><b>Find a genre:</b> </label>
+        <input list="niche-genres" id="genre" type="text" name="genre" placeholder="Start typing for suggestions">
+        <datalist id="niche-genres"> 
+            {{#each niche}}
+            <option value='{{this.name}}'>{{this.name}}</p>
+            {{/each}}
+        </datalist>
+        <input type="button" onclick="random_gen()" value="Generate Random">
+        <input type="text" style="display:none;" id="pinned" name="pinned" value="{{#each pinnedsongs}}{{this.code}};{{/each}}">
+        <input id="post-submit" type="submit">
+    </form>
+</div>
+
+<p id="full-list">{{#each niche}}{{this.name}},{{/each}}</p>
+
+<table>
+    <tr>
+        <th>Song</th>
+        <th>Artists</th>
+        <th>Genres</th>
+        <th>Pin</th>
+    </tr>
+    {{#each pinnedsongs}}
+    <tr>
+        <td>{{this.name}}</td>
+        <td>{{this.artists}}</td>
+        <td>{{this.genres}}</td>
+        <td><span onclick="star('{{this.code}}')" class="star star-pinned star-{{this.code}}">&starf;</span></td>
+    </tr>
+    {{/each}}
+    {{#each songs}}
+    <tr>
+        <td>{{this.name}}</td>
+        <td>{{this.artists}}</td>
+        <td>{{this.genres}}</td>
+        <td><span onclick="star('{{this.code}}')" class="star star-default star-{{this.code}}">&starf;</span></td>
+    </tr>
+    {{/each}}
+    
+</table>
+
+<button class="big-button" onclick="submit()">Create Playlist</button>
+
+<div class="playlist-submit-invisible">
+    <form method="post" action="/playlist" id="playlist-submit">
+        <input style="display:none;" type="text" name="final-songs" id="final-songs" value="{{#each pinnedsongs}}{{this.code}};{{/each}}">
+        <label for="playlist-name" >Give your playlist a name!</label>
+        <input type="text" name="playlist-name" id="playlist-name" placeholder="enter name here">
+        <input type="submit" id="submit-playlist"  value="Make My Playlist!">
+    </form>
+</div>

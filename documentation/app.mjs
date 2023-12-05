@@ -34,34 +34,13 @@ app.set('view engine', 'hbs');
 // body parser (req.body)
 app.use(express.urlencoded({ extended: false }));
 
-//
-// GLOBAL VARS
-//
+// GLOBALS
 
 
-
-//
-// HELPER FUNCTIONS
-//
-
-async function getSongsSimple(req, res) {
-  //helper function to query database for songs matching requested genre
-  //query genre to get the correct tag
-  const genretag = await Genre.find({name: req.body.genre}); 
-  let mySongs = {}; 
-  if(genretag) {
-    mySongs = await Song.find({genres: {$all: [genretag[0].name]}});
-  }
-  return mySongs;
-}
-
-
-//
 // PAGES
-//
 
 app.get('/home', async (req, res) => {
-  //real homepage
+
   if(req.session.login === true) { //logged in 
     //
   }
@@ -78,41 +57,42 @@ app.get('/home', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  // redirect to real homepage
+  
   res.redirect('/home');
 });
 
+async function getSongsSimple(req, res) {
+
+  let mySongs = {}; 
+
+  if(req.query.genre) {
+    const newString = req.query.genre.replaceAll("-", " ")
+    
+    mySongs = await Song.find({genres: {$all: [newString]}});
+  }
+
+  return mySongs;
+}
+
 app.get('/generate', async (req, res) => {
+  
+  const mySongs = await getSongsSimple(req, res);
   const myGenres = await Genre.find({});
-  res.render( 'generate', { layout: 'layout', url: process.env.BASE_URL, pinnedsongs: [], songs: [], niche: myGenres });
+  res.render( 'generate', { layout: 'layout', songs: mySongs, niche: myGenres });
+  
 });
 
-app.post('/generate', async (req, res) => {
-  let newsongs; 
-  const myGenres = await Genre.find({});
-  //get pinned songs 
-  const pinnedarrID = req.body.pinned.split(';');
-  const pinnedarrSong = []; 
-  await pinnedarrID.forEach(async element => {
-    const thissong = await Song.find({code: element});
-    if(thissong.length > 0) {
-      pinnedarrSong.push(thissong[0])
-    }
-  });
-  //query new songs from db
-  newsongs = await getSongsSimple(req, res)
-  //render with list of pinned + list of new generated
-  res.render( 'generate', { layout: 'layout', url: process.env.BASE_URL, pinnedsongs: pinnedarrSong, songs: newsongs, niche: myGenres });
-});
+app.get('/myplaylists', (req, res) => {
 
-app.get('/myplaylists', async (req, res) => {
-  const myplaylists = await User.find({name: req.session.user})
-  res.render( 'mine', { layout: 'layout', user: req.session.user, playlists: myplaylists.playlists });
+  res.render( 'mine', { layout: 'layout' });
+  
 });
 
 app.get('/register', (req, res) => {
-  res.render( 'register', { layout: 'layout', client_id: process.env.CLIENT_ID, user: req.session.user, url_encoded: process.env.REDIRECT_ENCODE });
-});
+
+    res.render( 'register', { layout: 'layout' });
+    
+  });
 
 app.get('/redir', async (req, res) => { //when user signs into spotify, redirects here to handle data and config, then redirects again to home
   if(req.query["code"]) {
@@ -171,13 +151,6 @@ app.get('/redir', async (req, res) => { //when user signs into spotify, redirect
     }
     else {
       console.log("old user... ");
-      try {
-        populate.getUserPlaylists(req, res, spotifyResponse); 
-      }
-      catch(err) {
-        console.log("error in populate: potentially overwhelming API calls");
-        console.log(err);
-      }
     }
     
   }
@@ -186,33 +159,6 @@ app.get('/redir', async (req, res) => { //when user signs into spotify, redirect
   }
 
   res.redirect('/home');
-});
-
-app.post('/login', (req, res) => {
-
-});
-
-app.post('/playlist', async (req, res) => {
-  const pinnedarrID = req.body['final-songs'].split(';');
-  const pinnedarrSong = []; 
-  await pinnedarrID.forEach(async element => {
-    const thissong = await Song.find({code: element});
-    if(thissong.length > 0) {
-      pinnedarrSong.push(thissong[0])
-    }
-  });
-
-  const genObj = {name: req.body['playlist-name'], genres: [], songs: pinnedarrSong};
-  const addGenObj = new Playlist(genObj);
-  addGenObj.save();
-
-  const findObj = await Playlist.find({name: req.body['playlist-name'], genres: [], songs: pinnedarrSong});
-
-  if(req.session.user != '/') {
-    User.updateOne( {username: req.session.user}, {$push: {playlists: findObj.id}})
-  }
-
-  res.redirect('/myplaylists');
 });
 
 

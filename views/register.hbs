@@ -1,1 +1,29 @@
-<p>register</p>
+
+
+<div style="" class='login sign'>
+    <h3>Login</h3>
+    <a href="https://accounts.spotify.com/authorize?client_id={{client_id}}&response_type=code&redirect_uri={{url_encoded}}&scope=user-top-read,playlist-read-private,playlist-read-collaborative">Login with Spotify</a>
+    <p>---or---</p>
+    <form method="post" action="/login">
+        <label for="user">Enter Username</label>
+        <input name="user" class="user" type="text" placeholder="username">
+        <label for="pass">Enter Password</label>
+        <input name="pass" class="pass" type="password" placeholder="password">
+        <input class="sub-button" type="submit">
+    </form>
+    <p>New user? Click <button class="invis-button" onclick="login_switch('login')">here</button> to create a new account</p>
+</div>
+
+<div style="display:none;" class='signup sign'>
+    <h3>Sign Up</h3>
+    <a href="https://accounts.spotify.com/authorize?client_id={{client_id}}&response_type=code&redirect_uri={{url_encoded}}&scope=user-top-read,playlist-read-private,playlist-read-collaborative">Sign up with Spotify</a>
+    <p>---or---</p>
+    <form method="post" action="/signup">
+        <label for="user">Enter Username</label>
+        <input name="user" class="user" type="text" placeholder="username">
+        <label for="pass">Enter Password</label>
+        <input name="pass" class="pass" type="password" placeholder="password">
+        <input class="sub-button" type="submit">
+    </form>
+    <p>Returning user? Click <button class="invis-button" onclick="login_switch('signup')">here</button> to sign in to your account</p>
+</div>

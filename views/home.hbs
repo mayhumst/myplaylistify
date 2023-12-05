@@ -1,25 +1,15 @@
-<h4>homepage</h4>
-<a href="https://accounts.spotify.com/authorize?client_id={{client_id}}&response_type=code&redirect_uri={{url_encoded}}&scope=user-top-read,playlist-read-private,playlist-read-collaborative">click</a>
-<p>current user: {{user}}</p>
+<h3>Welcome!</h3>
 
-<h1>Instructions:</h1>
-
-<p>
-    The "click" button allows you to sign into your spotify account and give my app permission to access your data. This includes playlists and top songs. When you do this it will redirect back to
-    my app and start querying the spotify API in the background while you interact with the page. The function queries several of your 
-    saved playlists to get songs to populate my Mongo database with songs and genres. It also creates a new User object stores in the users
-    collection in my db. The only personal info it stores about you from your account data is your Spotify username. 
-    If you click "click" again and login again, it recognizes that you have already registered on my app and does not query your playlists again.
-</p>
+<a href="/register">
+    sign in or register new user
+</a>
     
 <p>
-click "generate" to see the rough forms and to generate lists based on genre. To do: limit lists to ten or so songs and add "pin" feature, then save playlists.
+    or
 </p>
 
-<p>Obviously both forms are quite rough, but the majority of the work was spent learning the Spotify API interface. This was especially difficult because 
-    if I made too many API calls in a short period of time it would time me out for a very long time, up to 22 hours. I have implemented a try-catch block so 
-    that if you login now and the background function makes too many API calls it should not crash the site. I won't know for certain until it's tested however
-    so I recommend trying that feature last!!
-</p>
+<a href="/generate">
+    Start generating playlists 
+</a>
 
 
